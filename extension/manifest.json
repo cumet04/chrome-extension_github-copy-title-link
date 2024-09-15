@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "github copy issue link",
+  "version": "0.0.1",
+  "description": "",
+  "content_scripts": [{
+    "matches": [
+      "https://github.com/*/pull/*",
+      "https://github.com/*/issues/*"
+    ],
+    "js": ["entry.js"]
+  }]
+}
