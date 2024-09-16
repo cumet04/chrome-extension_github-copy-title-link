@@ -5,8 +5,8 @@ navigation.addEventListener("navigate", () => {
 });
 
 function entry() {
-  const title =
-    document.getElementsByClassName("js-issue-title markdown-title")[0];
+  const title = document.querySelector(".gh-header-title > .markdown-title");
+  const button = ensureButton();
 
   const url = document.location.origin + document.location.pathname;
   const name = title.textContent;
@@ -17,5 +17,28 @@ function entry() {
     "text/plain": new Blob([name], { type: "text/plain" }),
   });
 
-  title.addEventListener("click", () => navigator.clipboard.write([item]));
+  button.addEventListener("click", () => {
+    navigator.clipboard.write([item]);
+  });
+  title.append(button);
+}
+
+function ensureButton() {
+  const id = "copy-title-link";
+
+  // github内でページ遷移して複数回イベントが発生した場合やブラウザバックした場合などに
+  // 既存のボタンが残っている場合があるので、それを削除して新しいボタンを作成する
+  document.getElementById(id)?.remove();
+
+  const button = document.createElement("sup");
+  button.id = id;
+
+  button.className = "color-fg-muted";
+  button.innerHTML = "&#10697;";
+  button.style.position = "relative";
+  button.style.fontSize = "1rem";
+  button.style.top = "-1rem";
+  button.style.left = "0.3rem";
+  button.style.cursor = "pointer";
+  return button;
 }
