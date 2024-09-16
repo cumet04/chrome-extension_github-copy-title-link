@@ -1,4 +1,8 @@
-navigation.addEventListener("navigate", entry);
+navigation.addEventListener("navigate", () => {
+  // ブラウザバック時など、ページ遷移が完了する前に処理が動く場合があるので
+  // requestIdleCallbackで遷移が安定してから実行する
+  window.requestIdleCallback(entry);
+});
 
 function entry() {
   const title =
