@@ -5,7 +5,7 @@ navigation.addEventListener("navigate", () => {
 });
 
 function entry() {
-  const title = document.querySelector(".gh-header-title > .markdown-title");
+  const title = document.querySelector("[data-testid='issue-title'");
   const button = ensureButton();
 
   const url = document.location.origin + document.location.pathname;
