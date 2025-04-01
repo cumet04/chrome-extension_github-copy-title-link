@@ -13,7 +13,11 @@ function entry() {
     document.querySelector("h1.gh-header-title  > .js-issue-title");
   const button = ensureButton();
 
-  const url = document.location.origin + document.location.pathname;
+  // PRの差分ページなど、URL末尾に意図せぬURL成分がついている場合があるので除去
+  // MEMO: title DOMの取得もそうだが、issueとPRで処理分けたほうが良さそう
+  const url = document.location.toString()
+    .replace(/(issues\/\d+).*$/, "$1")
+    .replace(/(pull\/\d+).*$/, "$1");
   const name = title.textContent;
   const item = new window.ClipboardItem({
     "text/html": new Blob([`<a href=${url}>${name}</a>`], {
