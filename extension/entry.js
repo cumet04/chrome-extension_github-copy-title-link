@@ -5,7 +5,9 @@ navigation.addEventListener("navigate", () => {
 });
 
 function entry() {
-  const title = document.querySelector("[data-testid='issue-title'");
+  // issueページのtitle取得を試みて、なければPRページのtitle取得を試みる
+  const title = document.querySelector("[data-testid='issue-title']") ||
+    document.querySelector("h1.gh-header-title  > .js-issue-title");
   const button = ensureButton();
 
   const url = document.location.origin + document.location.pathname;
