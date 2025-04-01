@@ -3,6 +3,9 @@ navigation.addEventListener("navigate", () => {
   // requestIdleCallbackで遷移が安定してから実行する
   window.requestIdleCallback(entry);
 });
+window.addEventListener("load", () => {
+  window.requestIdleCallback(entry);
+});
 
 function entry() {
   // issueページのtitle取得を試みて、なければPRページのtitle取得を試みる
