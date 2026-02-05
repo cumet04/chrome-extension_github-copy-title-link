@@ -1,44 +1,22 @@
-navigation.addEventListener("navigate", () => {
-  // ブラウザバック時など、ページ遷移が完了する前に処理が動く場合があるので
-  // requestIdleCallbackで遷移が安定してから実行する
-  window.requestIdleCallback(entry);
-});
-window.addEventListener("load", () => {
-  window.requestIdleCallback(entry);
+new MutationObserver((_) => {
+  entry();
+}).observe(document.body, {
+  childList: true,
+  subtree: true,
 });
 
 function entry() {
+  const id = "copy-title-link";
+  if (document.getElementById(id)) return;
+
   // issueページのtitle取得を試みて、なければPRページのtitle取得を試みる
   const title = document.querySelector("[data-testid='issue-title']") ||
     document.querySelector("h1.gh-header-title  > .js-issue-title");
-  const button = ensureButton();
 
-  // PRの差分ページなど、URL末尾に意図せぬURL成分がついている場合があるので除去
-  // MEMO: title DOMの取得もそうだが、issueとPRで処理分けたほうが良さそう
-  const url = document.location.toString()
-    .replace(/(issues\/\d+).*$/, "$1")
-    .replace(/(pull\/\d+).*$/, "$1");
-  const name = title.textContent;
-  const item = new window.ClipboardItem({
-    "text/html": new Blob([`<a href=${url}>${name}</a>`], {
-      type: "text/html",
-    }),
-    "text/plain": new Blob([name], { type: "text/plain" }),
-  });
-
-  button.addEventListener("click", () => {
-    navigator.clipboard.write([item]);
-  });
-  title.append(button);
+  title.append(createButton(id));
 }
 
-function ensureButton() {
-  const id = "copy-title-link";
-
-  // github内でページ遷移して複数回イベントが発生した場合やブラウザバックした場合などに
-  // 既存のボタンが残っている場合があるので、それを削除して新しいボタンを作成する
-  document.getElementById(id)?.remove();
-
+function createButton(id) {
   const button = document.createElement("sup");
   button.id = id;
 
@@ -49,5 +27,24 @@ function ensureButton() {
   button.style.top = "-1rem";
   button.style.left = "0.3rem";
   button.style.cursor = "pointer";
+
+  button.addEventListener("click", () => {
+    // PRの差分ページなど、URL末尾に意図せぬURL成分がついている場合があるので除去
+    // MEMO: title DOMの取得もそうだが、issueとPRで処理分けたほうが良さそう
+    const url = document.location.toString()
+      .replace(/(issues\/\d+).*$/, "$1")
+      .replace(/(pull\/\d+).*$/, "$1");
+    const name = title.textContent;
+
+    const item = new window.ClipboardItem({
+      "text/html": new Blob([`<a href=${url}>${name}</a>`], {
+        type: "text/html",
+      }),
+      "text/plain": new Blob([name], { type: "text/plain" }),
+    });
+
+    navigator.clipboard.write([item]);
+  });
+
   return button;
 }
