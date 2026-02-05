@@ -1,19 +1,16 @@
 new MutationObserver((_) => {
-  entry();
+  const id = "copy-title-link";
+  if (document.getElementById(id)) return;
+
+  titleElement().append(createButton(id));
 }).observe(document.body, {
   childList: true,
   subtree: true,
 });
 
-function entry() {
-  const id = "copy-title-link";
-  if (document.getElementById(id)) return;
-
-  // issueページのtitle取得を試みて、なければPRページのtitle取得を試みる
-  const title = document.querySelector("[data-testid='issue-title']") ||
-    document.querySelector("h1.gh-header-title  > .js-issue-title");
-
-  title.append(createButton(id));
+function titleElement() {
+  return document.querySelector("[data-testid='issue-title'") ||
+    document.querySelector("h1[data-component=PH_Title] > .markdown-title");
 }
 
 function createButton(id) {
