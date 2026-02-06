@@ -2,7 +2,29 @@ new MutationObserver((_) => {
   const id = "copy-title-link";
   if (document.getElementById(id)) return;
 
-  titleElement().append(createButton(id));
+  const title = titleElement();
+
+  // PRの差分ページなど、URL末尾に意図せぬURL成分がついている場合があるので除去
+  // MEMO: title DOMの取得もそうだが、issueとPRで処理分けたほうが良さそう
+  const url = document.location.toString()
+    .replace(/(issues\/\d+).*$/, "$1")
+    .replace(/(pull\/\d+).*$/, "$1");
+  const name = title.textContent; // この文字列はボタン追加前に（contentが増える前に）取得しておく
+
+  const button = createButton(id);
+  button.addEventListener("click", () => {
+    const item = new window.ClipboardItem({
+      "text/html": new Blob([`<a href=${url}>${name}</a>`], {
+        type: "text/html",
+      }),
+      "text/plain": new Blob([name], { type: "text/plain" }),
+    });
+
+    navigator.clipboard.write([item]);
+    console.debug(`Copied: ${name} (${url})`);
+  });
+
+  title.append(button);
 }).observe(document.body, {
   childList: true,
   subtree: true,
@@ -25,26 +47,5 @@ function createButton(id) {
   button.style.left = "0.3rem";
   button.style.cursor = "pointer";
 
-  button.addEventListener("click", onClick);
-
   return button;
-}
-
-function onClick() {
-  // PRの差分ページなど、URL末尾に意図せぬURL成分がついている場合があるので除去
-  // MEMO: title DOMの取得もそうだが、issueとPRで処理分けたほうが良さそう
-  const url = document.location.toString()
-    .replace(/(issues\/\d+).*$/, "$1")
-    .replace(/(pull\/\d+).*$/, "$1");
-  const name = titleElement().textContent;
-
-  const item = new window.ClipboardItem({
-    "text/html": new Blob([`<a href=${url}>${name}</a>`], {
-      type: "text/html",
-    }),
-    "text/plain": new Blob([name], { type: "text/plain" }),
-  });
-
-  navigator.clipboard.write([item]);
-  console.debug(`Copied: ${name} (${url})`);
 }
