@@ -25,23 +25,26 @@ function createButton(id) {
   button.style.left = "0.3rem";
   button.style.cursor = "pointer";
 
-  button.addEventListener("click", () => {
-    // PRの差分ページなど、URL末尾に意図せぬURL成分がついている場合があるので除去
-    // MEMO: title DOMの取得もそうだが、issueとPRで処理分けたほうが良さそう
-    const url = document.location.toString()
-      .replace(/(issues\/\d+).*$/, "$1")
-      .replace(/(pull\/\d+).*$/, "$1");
-    const name = title.textContent;
-
-    const item = new window.ClipboardItem({
-      "text/html": new Blob([`<a href=${url}>${name}</a>`], {
-        type: "text/html",
-      }),
-      "text/plain": new Blob([name], { type: "text/plain" }),
-    });
-
-    navigator.clipboard.write([item]);
-  });
+  button.addEventListener("click", onClick);
 
   return button;
+}
+
+function onClick() {
+  // PRの差分ページなど、URL末尾に意図せぬURL成分がついている場合があるので除去
+  // MEMO: title DOMの取得もそうだが、issueとPRで処理分けたほうが良さそう
+  const url = document.location.toString()
+    .replace(/(issues\/\d+).*$/, "$1")
+    .replace(/(pull\/\d+).*$/, "$1");
+  const name = titleElement().textContent;
+
+  const item = new window.ClipboardItem({
+    "text/html": new Blob([`<a href=${url}>${name}</a>`], {
+      type: "text/html",
+    }),
+    "text/plain": new Blob([name], { type: "text/plain" }),
+  });
+
+  navigator.clipboard.write([item]);
+  console.debug(`Copied: ${name} (${url})`);
 }
