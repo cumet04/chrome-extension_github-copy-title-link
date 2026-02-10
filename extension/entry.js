@@ -3,6 +3,7 @@ new MutationObserver((_) => {
   if (document.getElementById(id)) return;
 
   const title = titleElement();
+  if (!title) return;
 
   // PRの差分ページなど、URL末尾に意図せぬURL成分がついている場合があるので除去
   // MEMO: title DOMの取得もそうだが、issueとPRで処理分けたほうが良さそう
