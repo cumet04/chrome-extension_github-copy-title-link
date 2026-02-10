@@ -32,8 +32,9 @@ new MutationObserver((_) => {
 });
 
 function titleElement() {
-  return document.querySelector("[data-testid='issue-title'") ||
-    document.querySelector("h1[data-component=PH_Title] > .markdown-title");
+  return document.querySelector("[data-testid='issue-title'") || // issue
+    document.querySelector("h1.gh-header-title  > .js-issue-title") || // PR画面
+    document.querySelector("h1[data-component=PH_Title] > .markdown-title"); // PRのdiffページのpreview版画面
 }
 
 function createButton(id) {
